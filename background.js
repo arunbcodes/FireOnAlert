@@ -54,10 +54,27 @@
 // });
 
 
+// If you don't want to use storage then you can pass the message from content script and use it here
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-    if(typeof message === 'object' && message.msg === 'Hello') {
+    if(typeof message === 'object' && message.scrips !== undefined) {
         // chrome.pageAction.show(sender.tab.id);
-        console.log("I got your message");
+        console.log("I got your message and the message is");
+        console.log(JSON.parse(message.scrips));
         console.log("The info present in the tabs key of sender object is: ", sender);
     }
 });
+
+
+// This will listen to changes in the storage and we ca get the value from there..
+// chrome.storage.onChanged.addListener(function(changes, namespace) {
+//     for (var key in changes) {
+//         var storageChange = changes[key];
+//         console.log(JSON.parse(storageChange.oldValue)); // You will get the value in json format
+//         console.log('Storage key "%s" in namespace "%s" changed. ' +
+//         'Old value was "%s", new value is "%s".',
+//         key,
+//         namespace,
+//         storageChange.oldValue,
+//         storageChange.newValue);
+//     }
+// });

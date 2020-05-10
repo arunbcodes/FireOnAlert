@@ -8,10 +8,6 @@ class Scrip  {
     }
 }
 
-// message is sent from an extension process
-chrome.runtime.sendMessage({msg: "Hello"});
-
-
 //message is sent from a content script
 // chrome.tabs.sendMessage(integer tabId, any message, object options, function responseCallback)
 
@@ -56,6 +52,24 @@ window.addEventListener("load", function load(event){
                                         }
                                     }
                                     console.log(alertContentArray);
+                                    // You can either store the values in the local storage as below
+
+                                    // let jsonifiedAlertContentArray = JSON.stringify(alertContentArray);
+                                    // chrome.storage.local.set({"scrips": jsonifiedAlertContentArray}, function() {
+                                    //     console.log('Value is set to ' + jsonifiedAlertContentArray);
+                                    // });
+                                    
+                                    // chrome.storage.local.get(['scrips'], function(result) {
+                                    //     try {
+                                    //         console.log(JSON.parse(result.scrips));
+                                    //     } catch (ex) {
+                                    //         console.error(ex);
+                                    //     }
+                                    // });
+
+                                    //[or]
+                                    // pass the message to background script like below
+                                    chrome.runtime.sendMessage({scrips: JSON.stringify(alertContentArray)});
                                 }
                                 catch (e) {
                                     // alert('Error: Document tree modified during iteration ' + e);
