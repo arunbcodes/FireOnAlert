@@ -1,21 +1,21 @@
 // When the extension is installed or upgraded ...
 // chrome.runtime.onInstalled.addListener(function() {
 //   // Replace all rules ...
-//   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+//     chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
 //     // With a new rule ...
-//     chrome.declarativeContent.onPageChanged.addRules([
-//       {
-//         // That fires when a page's URL contains a 'g' ...
-//         conditions: [
-//           new chrome.declarativeContent.PageStateMatcher({
-//             pageUrl: { urlContains: 'streak' },
-//           })
-//         ],
-//         // And shows the extension's page action.
-//         actions: [ new chrome.declarativeContent.ShowPageAction() ]
-//       }
-//     ]);
-//   });
+//         chrome.declarativeContent.onPageChanged.addRules([
+//         {
+//             // That fires when a page's URL contains a 'g' ...
+//             conditions: [
+//                 new chrome.declarativeContent.PageStateMatcher({
+//                 pageUrl: { urlContains: 'streak' },
+//                 })
+//             ],
+//             // And shows the extension's page action.
+//             actions: [ new chrome.declarativeContent.ShowPageAction() ]
+//         }
+//         ]);
+//     });
 // });
 
 // chrome.webNavigation.onCompleted.addListener(function(details) {
@@ -52,7 +52,14 @@
 //     }
 // }
 // });
-
+// chrome.tabs.onUpdated.addListener((tabId, changeInfo, tabInfo) => {
+//     console.log("tabinfo object");
+//     console.log(tabInfo);
+    
+//     chrome.browserAction.setPopup({tabId, popup: "popup.html"}, function(message, sender, sendResponse) {
+//         console.log("The pop upi is set using the page action set")
+//     });
+// });
 
 // If you don't want to use storage then you can pass the message from content script and use it here
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
@@ -61,11 +68,15 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
         console.log("I got your message and the message is");
         console.log(JSON.parse(message.scrips));
         console.log("The info present in the tabs key of sender object is: ", sender);
+        chrome.browserAction.setPopup({tabId: sender.tab.id, popup: "popup.html"}, function(message, sender, sendResponse) {
+            console.log("The pop upi is set using the page action set")
+        });
+
     }
 });
 
 
-// This will listen to changes in the storage and we ca get the value from there..
+// This will listen to changes in the storage and we can get the value from there..
 // chrome.storage.onChanged.addListener(function(changes, namespace) {
 //     for (var key in changes) {
 //         var storageChange = changes[key];

@@ -13,12 +13,17 @@
     "permissions": [
         "activeTab",
         "tabs",
-        "storage"
+        "storage",
+        "notifications",
+        "https://*.zerodha.com/*",
+        "file:///*"
     ],
-    "page_action": {
-        "default_icon": "icon.png"
+    "content_security_policy": "default-src 'self'",
+    "browser_action": {
+        "default_icon": "icon.png",
+        "default_title": "Fire On Alert"
     },
     "background": {
-    "scripts": ["background.js"]
+        "scripts": ["background.js"]
     }
 }

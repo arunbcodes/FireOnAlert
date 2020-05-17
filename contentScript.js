@@ -8,10 +8,6 @@ class Scrip  {
     }
 }
 
-//message is sent from a content script
-// chrome.tabs.sendMessage(integer tabId, any message, object options, function responseCallback)
-
-
 window.addEventListener("load", function load(event){
     // window.removeEventListener("load", load, false); //remove listener, no longer needed
     var jsInitCheckTimer = setInterval(checkForJS_Finish, 500);
@@ -86,3 +82,44 @@ window.addEventListener("load", function load(event){
         }
     }
 },false);
+
+
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+    if(typeof message === 'object' && message.action === "getContentForPopup") {
+        console.log("The message that is sent to pop up is");
+        console.log(alertContentArray);
+        console.log("The info present in the tabs key of sender object is: ", sender);
+        return sendResponse({scrips: JSON.stringify(alertContentArray)});
+        return true;
+    }
+});
+
+
+// chrome.runtime.onMessage.addListener(handler);
+
+// function handler() {
+//     heartbeat(
+//         function(message, sender, sendResponse) { //heartbeat success
+//             if(typeof message === 'object' && message.type === "getScripData") {
+//                 // chrome.pageAction.show(sender.tab.id);
+//                 console.log("The message that is sent to pop up is");
+//                 console.log(alertContentArray);
+//                 console.log("The info present in the tabs key of sender object is: ", sender);
+//             }
+//         },
+//         function(){ // heartbeat failure
+//             someEvent.removeListener(handler);
+//             console.log("Couldn't contact background script. The content script has become orphaned!");
+//         }
+//     );
+// }
+
+// function heartbeat(success, failure) {
+//     chrome.runtime.sendMessage({heartbeat: true}, function(reply){
+//         if(chrome.runtime.lastError){
+//             failure();
+//         } else {
+//             success();
+//         }
+//     });
+// }
