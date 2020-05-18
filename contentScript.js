@@ -1,4 +1,5 @@
 var alertContentArray = [];
+var alertContentSet = new Set();
 class Scrip  {
     constructor(scripName, scripEntryPrice, scripQty, orderTriggeredTime) {
         this.scripName = scripName;
@@ -44,9 +45,11 @@ window.addEventListener("load", function load(event){
                                         let orderTriggeredTime = document.evaluate('div/div/div[2]/div[2]/div/p[1]', alertIterator.snapshotItem(i), null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
                                         if(scripName && scripEntryPrice && scripQty && orderTriggeredTime){
                                             let scrip1 = new Scrip(scripName.textContent, scripEntryPrice.textContent, scripQty.textContent, orderTriggeredTime.textContent);
-                                            alertContentArray.push(scrip1);
+                                            alertContentSet.add(JSON.stringify(scrip1));
+                                            // alertContentArray.push(scrip1);
                                         }
                                     }
+                                    alertContentArray = Array.from(alertContentSet);
                                     console.log(alertContentArray);
                                     // You can either store the values in the local storage as below
 
@@ -65,7 +68,7 @@ window.addEventListener("load", function load(event){
 
                                     //[or]
                                     // pass the message to background script like below
-                                    chrome.runtime.sendMessage({scrips: JSON.stringify(alertContentArray)});
+                                    chrome.runtime.sendMessage({scrips: alertContentArray});
                                 }
                                 catch (e) {
                                     // alert('Error: Document tree modified during iteration ' + e);
@@ -89,8 +92,9 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
         console.log("The message that is sent to pop up is");
         console.log(alertContentArray);
         console.log("The info present in the tabs key of sender object is: ", sender);
-        return sendResponse({scrips: JSON.stringify(alertContentArray)});
-        return true;
+        // return sendResponse({scrips: JSON.stringify(alertContentArray)});
+        return sendResponse({scrips: alertContentArray});
+        // return true;
     }
 });
 

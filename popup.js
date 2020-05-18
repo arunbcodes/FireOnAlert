@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", function(event){
 function getResults(){
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         chrome.tabs.sendMessage(tabs[0].id, { action: "getContentForPopup" }, function (response) {
-            
             showResults(response.scrips);
         });
     });
@@ -16,7 +15,9 @@ function getResults(){
 
 function showResults(results) {
     var resultsElement = document.getElementById("firedScripsTable");
-    JSON.parse(results).forEach(element => {
+    // JSON.parse(results).forEach(element1 => {
+    results.forEach(element1 => {
+        let element = JSON.parse(element1);
         let scripRow = document.createElement('tr');
 
         scripName = document.createElement('td');

@@ -66,7 +66,9 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     if(typeof message === 'object' && message.scrips !== undefined) {
         // chrome.pageAction.show(sender.tab.id);
         console.log("I got your message and the message is");
-        console.log(JSON.parse(message.scrips));
+        message.scrips.forEach(element => {
+            console.log(JSON.parse(element));
+        });
         console.log("The info present in the tabs key of sender object is: ", sender);
         chrome.browserAction.setPopup({tabId: sender.tab.id, popup: "popup.html"}, function(message, sender, sendResponse) {
             console.log("The pop upi is set using the page action set")
