@@ -1,3 +1,4 @@
+var prevTrigScrips = [];
 // When the extension is installed or upgraded ...
 // chrome.runtime.onInstalled.addListener(function() {
 //   // Replace all rules ...
@@ -17,41 +18,6 @@
 //         ]);
 //     });
 // });
-
-// chrome.webNavigation.onCompleted.addListener(function(details) {
-//     if (changeInfo.status == "complete" && tab.active) {
-//         MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
-//         let test = document.evaluate('//*[@id="root"]/div[1]/header/div/div[4]/div/div/div[2]/div',
-//                     document,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-//     let alertContentSnapshot = null;
-
-//     if (test) {
-//         if (test.snapshotItem(0)) {
-//             alertContentSnapshot = test.snapshotItem(0).lastChild;
-//         }
-//     }
-
-//     // const alertContentSnapshot = document;
-//     const config = { attributes: true, childList: true, subtree: true };
-
-//     const callback = function(mutationsList, observer) {
-//         for (let mutation of mutationsList) {
-//             if (mutation.type === "childList") {
-//                 console.log("A child node has been added or removed.");
-//             } else if (mutation.type === "attributes") {
-//                 console.log("The " + mutation.attributeName + " attribute was modified.");
-//             }
-//             let attributeName1 = mutation.attributeName;
-//             console.log("Attribute name " +mutation.attributeName +" changed to " +mutation.target[attributeName1] +" (was " +mutation.oldValue +")");
-//         }
-//     };
-
-//     const observer = new MutationObserver(callback);
-//     if (alertContentSnapshot) {
-//         observer.observe(alertContentSnapshot, config);
-//     }
-// }
-// });
 // chrome.tabs.onUpdated.addListener((tabId, changeInfo, tabInfo) => {
 //     console.log("tabinfo object");
 //     console.log(tabInfo);
@@ -68,6 +34,9 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
         console.log("I got your message and the message is");
         message.scrips.forEach(element => {
             console.log(JSON.parse(element));
+            if(!prevTrigScrips.includes(element.scripName)){
+                prevTrigScrips.push(element.scripName);
+            }
         });
         console.log("The info present in the tabs key of sender object is: ", sender);
         chrome.browserAction.setPopup({tabId: sender.tab.id, popup: "popup.html"}, function(message, sender, sendResponse) {

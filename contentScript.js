@@ -10,7 +10,6 @@ class Scrip  {
 }
 
 window.addEventListener("load", function load(event){
-    // window.removeEventListener("load", load, false); //remove listener, no longer needed
     var jsInitCheckTimer = setInterval(checkForJS_Finish, 500);
     
 
@@ -65,7 +64,6 @@ window.addEventListener("load", function load(event){
                                     //         console.error(ex);
                                     //     }
                                     // });
-
                                     //[or]
                                     // pass the message to background script like below
                                     chrome.runtime.sendMessage({scrips: alertContentArray});
