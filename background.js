@@ -38,6 +38,15 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
                 prevTrigScrips.push(element.scripName);
             }
         });
+        chrome.tabs.query({url:'https://*.aliceblueonline.com/*'}, function (params) {
+            console.log('getting tabs');
+            console.log(params);
+            console.log(params[0].id);
+            chrome.tabs.executeScript(params[0].id, {file:'fireOrder.js'}, result => {
+                const lastErr = chrome.runtime.lastError;
+                if (lastErr) console.log('tab: ' + params[0].id + ' lastError: ' + JSON.stringify(lastErr));
+            });
+        })
         console.log("The info present in the tabs key of sender object is: ", sender);
         chrome.browserAction.setPopup({tabId: sender.tab.id, popup: "popup.html"}, function(message, sender, sendResponse) {
             console.log("The pop upi is set using the page action set")

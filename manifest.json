@@ -13,7 +13,8 @@
     "permissions": [
         "activeTab",
         "tabs",
-        "storage"
+        "storage",
+        "https://*.aliceblueonline.com/*"
     ],
     "content_security_policy": "default-src 'self'",
     "browser_action": {
