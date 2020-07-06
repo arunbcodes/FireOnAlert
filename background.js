@@ -1,31 +1,4 @@
 var prevTrigScrips = [];
-// When the extension is installed or upgraded ...
-// chrome.runtime.onInstalled.addListener(function() {
-//   // Replace all rules ...
-//     chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-//     // With a new rule ...
-//         chrome.declarativeContent.onPageChanged.addRules([
-//         {
-//             // That fires when a page's URL contains a 'g' ...
-//             conditions: [
-//                 new chrome.declarativeContent.PageStateMatcher({
-//                 pageUrl: { urlContains: 'streak' },
-//                 })
-//             ],
-//             // And shows the extension's page action.
-//             actions: [ new chrome.declarativeContent.ShowPageAction() ]
-//         }
-//         ]);
-//     });
-// });
-// chrome.tabs.onUpdated.addListener((tabId, changeInfo, tabInfo) => {
-//     console.log("tabinfo object");
-//     console.log(tabInfo);
-    
-//     chrome.browserAction.setPopup({tabId, popup: "popup.html"}, function(message, sender, sendResponse) {
-//         console.log("The pop upi is set using the page action set")
-//     });
-// });
 
 // If you don't want to use storage then you can pass the message from content script and use it here
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
@@ -38,15 +11,20 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
                 prevTrigScrips.push(element.scripName);
             }
         });
+
         chrome.tabs.query({url:'https://*.aliceblueonline.com/*'}, function (params) {
             console.log('getting tabs');
             console.log(params);
             console.log(params[0].id);
-            chrome.tabs.executeScript(params[0].id, {file:'fireOrder.js'}, result => {
-                const lastErr = chrome.runtime.lastError;
-                if (lastErr) console.log('tab: ' + params[0].id + ' lastError: ' + JSON.stringify(lastErr));
+            chrome.tabs.executeScript(params[0].id, {
+                code: "var fireOrderParams = JSON.parse('" + encodeToPassToContentScript(message) + "');"
+            }, () => {
+                chrome.tabs.executeScript(params[0].id, {file:'fireOrder.js'}, result => {
+                    const lastErr = chrome.runtime.lastError;
+                    if (lastErr) console.log('tab: ' + params[0].id + ' lastError: ' + JSON.stringify(lastErr));
+                });
             });
-        })
+        });
         console.log("The info present in the tabs key of sender object is: ", sender);
         chrome.browserAction.setPopup({tabId: sender.tab.id, popup: "popup.html"}, function(message, sender, sendResponse) {
             console.log("The pop upi is set using the page action set")
@@ -54,6 +32,17 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 
     }
 });
+
+function encodeToPassToContentScript(obj){
+    console.log('encodeToPassToContentScript');
+    console.log(obj);
+    console.log('after stringify');
+    console.log(JSON.stringify(obj));
+    //Encodes into JSON and quotes \ characters so they will not break
+    //  when re-interpreted as a string literal. Failing to do so could
+    //  result in the injection of arbitrary code and/or JSON.parse() failing.
+    return JSON.stringify(obj).replace(/\\/g,'\\\\').replace(/'/g,"\\'")
+}
 
 
 // This will listen to changes in the storage and we can get the value from there..
