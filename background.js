@@ -3,14 +3,8 @@ var prevTrigScrips = [];
 // If you don't want to use storage then you can pass the message from content script and use it here
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     if(typeof message === 'object' && message.scrips !== undefined) {
-        // chrome.pageAction.show(sender.tab.id);
-        console.log("I got your message and the message is");
-        message.scrips.forEach(element => {
-            console.log(JSON.parse(element));
-            if(!prevTrigScrips.includes(element.scripName)){
-                prevTrigScrips.push(element.scripName);
-            }
-        });
+        console.log("I got the message from contentScript and the message is");
+        console.log(message);
 
         chrome.tabs.query({url:'https://*.aliceblueonline.com/*'}, function (params) {
             console.log('getting tabs');

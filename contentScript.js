@@ -2,11 +2,12 @@ var alertContentArray = [];
 var alertContentSet = new Set();
 
 class Scrip {
-    constructor(scripName, scripEntryPrice, scripQty, orderTriggeredTime) {
+    constructor(scripName, scripEntryPrice, scripQty, orderTriggeredTime, buyOrSell) {
         this.scripName = scripName;
         this.scripEntryPrice = scripEntryPrice;
         this.scripQty = scripQty;
-        this.orderTriggeredTime = orderTriggeredTime
+        this.orderTriggeredTime = orderTriggeredTime;
+        this.buyOrSell = buyOrSell;
     }
 }
 
@@ -38,7 +39,7 @@ window.addEventListener("load", function load(event) {
                                 console.log(`A child node ${mutation.target} has been added!`, mutation.target);
                                 console.log(`A child node with test has been added!`, noNotificationParentDiv);
                                 try {
-                                    let i = alertIterator.snapshotLength -1;
+                                    let i = 0;//alertIterator.snapshotLength -1;
                                     // for (var i = 0; i < alertIterator.snapshotLength; i++) {
                                         let alertText = document.evaluate('div/div/div[1]/div/span', alertIterator.snapshotItem(i), null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.textContent;
                                         if (alertText === 'BUY ALERT' || alertText === 'SELL ALERT' || alertText === 'COMPLETE') {
@@ -47,7 +48,8 @@ window.addEventListener("load", function load(event) {
                                             let scripQty = document.evaluate('div/div/div[2]/div[2]/div/div/p[2]', alertIterator.snapshotItem(i), null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
                                             let orderTriggeredTime = document.evaluate('div/div/div[2]/div[2]/div/p[1]', alertIterator.snapshotItem(i), null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
                                             if (scripName && scripEntryPrice && scripQty && orderTriggeredTime) {
-                                                let scrip1 = new Scrip(scripName.textContent, scripEntryPrice.textContent, scripQty.textContent, orderTriggeredTime.textContent);
+                                                let longOrShort = alertText.includes('BUY') ? 'BUY' : 'BUY';
+                                                let scrip1 = new Scrip(scripName.textContent, scripEntryPrice.textContent, scripQty.textContent, orderTriggeredTime.textContent, longOrShort);
                                                 alertContentSet.add(JSON.stringify(scrip1));
                                                 // alertContentArray.push(scrip1);
                                             }

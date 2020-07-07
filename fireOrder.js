@@ -1,9 +1,10 @@
 // import { pageObjects } from './my-module.js';
 
 console.log("Hi from fireOrder script");
-// if (typeof fireOrderParams === 'string') {
-	console.log(fireOrderParams);
-// }
+console.log(fireOrderParams);
+fireOrderParams.scrips.forEach(element => {
+	placeOrder(JSON.parse(element));
+});
 function pageObjects() {
 	return {
 		selectors: {
@@ -32,6 +33,8 @@ function pageObjects() {
 			}
 		},
 		checkElement: async (selector, refNode = document) => {
+			console.log('Inside checkElement');
+			console.log(refNode.querySelector(selector));
 			while (refNode.querySelector(selector) === null) {
 				await new Promise(resolve => requestAnimationFrame(resolve))
 			}
@@ -65,15 +68,17 @@ async function searchScripAndDisplayPopUp(scripName, type = 'BUY') {
 	await pageObjects().checkElements(pageObjects().selectors.subscribedScripsList,
 		(refNode, selector) => Array.from(refNode.querySelectorAll(selector)).find(el => el.querySelector(pageObjects().selectors.individualScrip).textContent === scripName) === undefined)
 		.then((elements) => Array.from(elements)
-			.find(el => el.querySelector(pageObjects().selectors.individualScrip).textContent === 'ITC')
+			.find(el => el.querySelector(pageObjects().selectors.individualScrip).textContent === scripName)
 			.querySelector(pageObjects().selectors.clickOnIndividualScrip)
 			.dispatchEvent(new Event('click', {
 				bubbles: true
 			}))
 		);
 	if (type === 'SELL') {
+		await new Promise(r => setTimeout(r, 500));
 		await pageObjects().checkElement(pageObjects().selectors.placeOrderPopUp)
-			.then(element => element.querySelector(pageObjects().selectors.insidePlaceOrderPopUp.buySellSwitch).click());
+			.then(element => pageObjects().checkElement(pageObjects().selectors.insidePlaceOrderPopUp.buySellSwitch, element)
+				.then(elem => elem.click()));
 	}
 }
 
@@ -122,7 +127,7 @@ async function qtyAndPrice(type, qty, price, trigPrice, discQty) {
 	let qtyInputElement = parentForInputElements.find(el => el.querySelector('div label').textContent.includes('QTY'));
 	qtyInputElement.querySelector('div input').value = qty;
 	//Enter price
-	if (!(type === 'MKT')) {
+	if (!(type === 'MKT') && !(type === 'SLM')) {
 		let priceInputElement = parentForInputElements.find(el => el.querySelector('div label').textContent.includes('PRICE ('));
 		priceInputElement.querySelector('div input').value = price;
 	}
@@ -171,16 +176,22 @@ async function buyOrSell(type) {
 
 	let buyOrderButtonElement = Array.from(placeOrderButtonList).find(el => el.querySelector('button span')
 		.textContent === type); //BUY or SELL
+	await new Promise(r => setTimeout(r, 1000));
 	buyOrderButtonElement.dispatchEvent(new Event('click', {
 		bubbles: true
 	}));
 }
 
-searchScripAndDisplayPopUp('ITC')
-	.then(r => cncNormalMIS('MIS'))
-	.then(a => regularBoAmo('BO'))
-	.then(b => lmtMktSlSlm('MKT'))
-	.then(c => qtyAndPrice('MKT', 1, 100, 100, 1))
-	.then(c => boAdditionalDetails(5, 5, 2, 100, 1))
-	.then(c => dayOrIOC('IOC'))
-	.then(c => buyOrSell('BUY'));
+function placeOrder(params) {
+	console.log('Inside placeOrder');
+	console.log(params);
+	let regularBoAmoOrder = 'Regular';
+	searchScripAndDisplayPopUp(params.scripName, params.buyOrSell)
+		.then(r => cncNormalMIS('MIS'))
+		.then(a => regularBoAmo(regularBoAmoOrder))
+		.then(b => lmtMktSlSlm('MKT'))
+		.then(c => qtyAndPrice('MKT', params.scripQty, 100, params.scripEntryPrice, 1))
+		.then(d => regularBoAmoOrder === 'BO' ? boAdditionalDetails(5, 5, 2) : Promise.resolve())
+		.then(e => dayOrIOC('IOC'))
+		.then(f => buyOrSell(params.buyOrSell));
+}
