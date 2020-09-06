@@ -39,8 +39,8 @@ window.addEventListener("load", function load(event) {
                                 console.log(`A child node ${mutation.target} has been added!`, mutation.target);
                                 console.log(`A child node with test has been added!`, noNotificationParentDiv);
                                 try {
-                                    let i = 0;//alertIterator.snapshotLength -1;
-                                    // for (var i = 0; i < alertIterator.snapshotLength; i++) {
+                                    // let i = 0;//alertIterator.snapshotLength -1;
+                                    for (let i = 0; i < alertIterator.snapshotLength; i++) {
                                         let alertText = document.evaluate('div/div/div[1]/div/span', alertIterator.snapshotItem(i), null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.textContent;
                                         if (alertText === 'BUY ALERT' || alertText === 'SELL ALERT' || alertText === 'COMPLETE') {
                                             let scripName = document.evaluate('div/div/div[1]/div[2]/p[1]', alertIterator.snapshotItem(i), null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
@@ -54,7 +54,7 @@ window.addEventListener("load", function load(event) {
                                                 // alertContentArray.push(scrip1);
                                             }
                                         }
-                                    // }
+                                    }
                                     alertContentArray = Array.from(alertContentSet);
                                     console.log(alertContentArray);
                                     // You can either store the values in the local storage as below
@@ -73,7 +73,9 @@ window.addEventListener("load", function load(event) {
                                     // });
                                     //[or]
                                     // pass the message to background script like below
-                                    chrome.runtime.sendMessage({scrips: alertContentArray});
+                                    if(typeof chrome.app.isInstalled!=='undefined') {
+                                        chrome.runtime.sendMessage({scrips: alertContentArray});
+                                    }
                                 } catch (e) {
                                     // alert('Error: Document tree modified during iteration ' + e);
                                     console.log('Error: Document tree modified during iteration ' + e);
@@ -82,9 +84,9 @@ window.addEventListener("load", function load(event) {
                         }
                     }
                 }
-            }
+            };
             const observer = new MutationObserver(callback);
-            console.log("going to observe", noNotificationParentDiv)
+            console.log("going to observe", noNotificationParentDiv);
             observer.observe(noNotificationParentDiv, config);
         }
     }

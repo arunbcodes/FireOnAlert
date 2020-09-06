@@ -10,8 +10,9 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
             console.log('getting tabs');
             console.log(params);
             console.log(params[0].id);
+            chrome.tabs.update(params[0].id, {active: true});
             chrome.tabs.executeScript(params[0].id, {
-                code: "var fireOrderParams = JSON.parse('" + encodeToPassToContentScript(message) + "');"
+                code: "var fireOrderParams = JSON.parse('" + encodeToPassToFireOrderScript(message) + "');"
             }, () => {
                 chrome.tabs.executeScript(params[0].id, {file:'fireOrder.js'}, result => {
                     const lastErr = chrome.runtime.lastError;
@@ -27,8 +28,8 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     }
 });
 
-function encodeToPassToContentScript(obj){
-    console.log('encodeToPassToContentScript');
+function encodeToPassToFireOrderScript(obj){
+    console.log('encodeToPassToFireOrderScript');
     console.log(obj);
     console.log('after stringify');
     console.log(JSON.stringify(obj));

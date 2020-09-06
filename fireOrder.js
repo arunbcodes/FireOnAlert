@@ -2,9 +2,10 @@
 
 console.log("Hi from fireOrder script");
 console.log(fireOrderParams);
-fireOrderParams.scrips.forEach(element => {
-	placeOrder(JSON.parse(element));
-});
+// fireOrderParams.scrips.forEach(element => {
+// 	placeOrder(JSON.parse(element));
+// });
+placeOrder(fireOrderParams);
 function pageObjects() {
 	return {
 		selectors: {
@@ -182,16 +183,19 @@ async function buyOrSell(type) {
 	}));
 }
 
-function placeOrder(params) {
-	console.log('Inside placeOrder');
-	console.log(params);
-	let regularBoAmoOrder = 'Regular';
-	searchScripAndDisplayPopUp(params.scripName, params.buyOrSell)
-		.then(r => cncNormalMIS('MIS'))
-		.then(a => regularBoAmo(regularBoAmoOrder))
-		.then(b => lmtMktSlSlm('MKT'))
-		.then(c => qtyAndPrice('MKT', params.scripQty, 100, params.scripEntryPrice, 1))
-		.then(d => regularBoAmoOrder === 'BO' ? boAdditionalDetails(5, 5, 2) : Promise.resolve())
-		.then(e => dayOrIOC('IOC'))
-		.then(f => buyOrSell(params.buyOrSell));
+async function placeOrder(params) {
+	for(const stringifiedScrip of params.scrips){
+		const scrip = JSON.parse(stringifiedScrip);
+		console.log('Inside placeOrder');
+		console.log(scrip);
+		let regularBoAmoOrder = 'Regular';
+		await searchScripAndDisplayPopUp(scrip.scripName, scrip.buyOrSell)
+			.then(r => cncNormalMIS('MIS'))
+			.then(a => regularBoAmo(regularBoAmoOrder))
+			.then(b => lmtMktSlSlm('MKT'))
+			.then(c => qtyAndPrice('MKT', scrip.scripQty, 100, scrip.scripEntryPrice, 1))
+			.then(d => regularBoAmoOrder === 'BO' ? boAdditionalDetails(5, 5, 2) : Promise.resolve())
+			.then(e => dayOrIOC('IOC'))
+			.then(f => buyOrSell(scrip.buyOrSell));
+	}
 }
