@@ -1,4 +1,4 @@
-var pageObjects = {
+var pageObjects1 = {
     selectors: {
         searchInput: 'searchinput',
         scripSearchList: '#step5 > div > ul li div',
@@ -12,4 +12,4 @@ var pageObjects = {
     }
 }
 
-export default pageObjects;
+export default pageObjects1;

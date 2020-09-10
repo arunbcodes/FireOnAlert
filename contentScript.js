@@ -11,12 +11,30 @@ class Scrip {
     }
 }
 
+function streakPageObjects() {
+    return {
+        selectors: {
+            notificationParentDiv: '//*[@id="root"]/div[1]/header/div/div[4]/div/div/div[2]',
+            notificationDiv: '//*[@id="root"]/div[1]/header/div/div[4]/div/div/div[2]/div',
+            notificationRowBuySellText: 'div/div/div[1]/div/span',
+            notificationRowScripName: 'div/div/div[1]/div[2]/p[1]',
+            notificationRowScripEntryPrice: 'div/div/div[2]/div[2]/p[1]',
+            notificationRowScripQty: 'div/div/div[2]/div[2]/div/div/p[2]',
+            notificationRowOrderTriggeredTime: 'div/div/div[2]/div[2]/div/p[1]'
+        },
+        getNode: (xpathExpression, contextNode = document, namespaceResolver = null, resultType = XPathResult.FIRST_ORDERED_NODE_TYPE, result = null) => {
+            return document.evaluate(xpathExpression, contextNode, namespaceResolver, resultType, result);
+        }
+    }
+}
+
 window.addEventListener("load", function load(event) {
     var jsInitCheckTimer = setInterval(checkForJS_Finish, 500);
+    let pageObjects = streakPageObjects();
 
 
     function checkForJS_Finish() {
-        let noNotificationParentDiv = document.evaluate('//*[@id="root"]/div[1]/header/div/div[4]/div/div/div[2]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        let noNotificationParentDiv = pageObjects.getNode(pageObjects.selectors.notificationParentDiv).singleNodeValue;
         console.log(noNotificationParentDiv);
         if (noNotificationParentDiv) {
             clearInterval(jsInitCheckTimer);
@@ -34,19 +52,21 @@ window.addEventListener("load", function load(event) {
                     if (mutation.type === 'childList') {
                         // console.log('A child node has been added or removed.');
                         if (mutation.target && [...mutation.addedNodes].length) {
-                            let alertIterator = document.evaluate('//*[@id="root"]/div[1]/header/div/div[4]/div/div/div[2]/div', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                            let alertIterator = pageObjects.getNode(pageObjects.selectors.notificationDiv, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
                             if (noNotificationParentDiv) {
                                 console.log(`A child node ${mutation.target} has been added!`, mutation.target);
                                 console.log(`A child node with test has been added!`, noNotificationParentDiv);
                                 try {
                                     // let i = 0;//alertIterator.snapshotLength -1;
                                     for (let i = 0; i < alertIterator.snapshotLength; i++) {
-                                        let alertText = document.evaluate('div/div/div[1]/div/span', alertIterator.snapshotItem(i), null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.textContent;
+                                        let alertText = pageObjects.getNode(pageObjects.selectors.notificationRowBuySellText, alertIterator.snapshotItem(i)).singleNodeValue.textContent;
+                                        console.log("alertText");
+                                        console.log(alertText);
                                         if (alertText === 'BUY ALERT' || alertText === 'SELL ALERT' || alertText === 'COMPLETE') {
-                                            let scripName = document.evaluate('div/div/div[1]/div[2]/p[1]', alertIterator.snapshotItem(i), null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-                                            let scripEntryPrice = document.evaluate('div/div/div[2]/div[2]/p[1]', alertIterator.snapshotItem(i), null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-                                            let scripQty = document.evaluate('div/div/div[2]/div[2]/div/div/p[2]', alertIterator.snapshotItem(i), null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-                                            let orderTriggeredTime = document.evaluate('div/div/div[2]/div[2]/div/p[1]', alertIterator.snapshotItem(i), null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+                                            let scripName = pageObjects.getNode(pageObjects.selectors.notificationRowScripName, alertIterator.snapshotItem(i)).singleNodeValue;
+                                            let scripEntryPrice = pageObjects.getNode(pageObjects.selectors.notificationRowScripEntryPrice, alertIterator.snapshotItem(i)).singleNodeValue;
+                                            let scripQty = pageObjects.getNode(pageObjects.selectors.notificationRowScripQty, alertIterator.snapshotItem(i)).singleNodeValue;
+                                            let orderTriggeredTime = pageObjects.getNode(pageObjects.selectors.notificationRowOrderTriggeredTime, alertIterator.snapshotItem(i)).singleNodeValue;
                                             if (scripName && scripEntryPrice && scripQty && orderTriggeredTime) {
                                                 let longOrShort = alertText.includes('BUY') ? 'BUY' : 'BUY';
                                                 let scrip1 = new Scrip(scripName.textContent, scripEntryPrice.textContent, scripQty.textContent, orderTriggeredTime.textContent, longOrShort);
@@ -78,7 +98,7 @@ window.addEventListener("load", function load(event) {
                                     }
                                 } catch (e) {
                                     // alert('Error: Document tree modified during iteration ' + e);
-                                    console.log('Error: Document tree modified during iteration ' + e);
+                                    console.log('Error occurred while iterating alert div ' + e);
                                 }
                             }
                         }

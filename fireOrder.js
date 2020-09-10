@@ -1,4 +1,4 @@
-// import { pageObjects } from './my-module.js';
+// import { pageObjects1 } from './my-module.js';
 
 console.log("Hi from fireOrder script");
 console.log(fireOrderParams);
@@ -6,7 +6,7 @@ console.log(fireOrderParams);
 // 	placeOrder(JSON.parse(element));
 // });
 placeOrder(fireOrderParams);
-function pageObjects() {
+function alicePageObjects() {
 	return {
 		selectors: {
 			searchInput: 'searchinput',
@@ -54,11 +54,11 @@ function pageObjects() {
 async function searchScripAndDisplayPopUp(scripName, type = 'BUY') {
 	console.log('Inside searchScripAndDisplayPopUp');
 	// Search Scrip and make it display pop up
-	document.getElementById(pageObjects().selectors.searchInput).value = scripName; //ITC
-	await document.getElementById(pageObjects().selectors.searchInput).dispatchEvent(new Event('input', {
+	document.getElementById(alicePageObjects().selectors.searchInput).value = scripName; //ITC
+	await document.getElementById(alicePageObjects().selectors.searchInput).dispatchEvent(new Event('input', {
 		bubbles: true
 	}));
-	await pageObjects().checkElements(pageObjects().selectors.scripSearchList,
+	await alicePageObjects().checkElements(alicePageObjects().selectors.scripSearchList,
 		(refNode, selector) => Array.from(refNode.querySelectorAll(selector)).find(el => el.textContent === scripName) === undefined)
 		.then((elements) => Array.from(elements)
 			.find(el => el.textContent === scripName)
@@ -66,64 +66,64 @@ async function searchScripAndDisplayPopUp(scripName, type = 'BUY') {
 				bubbles: true
 			}))
 		);
-	await pageObjects().checkElements(pageObjects().selectors.subscribedScripsList,
-		(refNode, selector) => Array.from(refNode.querySelectorAll(selector)).find(el => el.querySelector(pageObjects().selectors.individualScrip).textContent === scripName) === undefined)
+	await alicePageObjects().checkElements(alicePageObjects().selectors.subscribedScripsList,
+		(refNode, selector) => Array.from(refNode.querySelectorAll(selector)).find(el => el.querySelector(alicePageObjects().selectors.individualScrip).textContent === scripName) === undefined)
 		.then((elements) => Array.from(elements)
-			.find(el => el.querySelector(pageObjects().selectors.individualScrip).textContent === scripName)
-			.querySelector(pageObjects().selectors.clickOnIndividualScrip)
+			.find(el => el.querySelector(alicePageObjects().selectors.individualScrip).textContent === scripName)
+			.querySelector(alicePageObjects().selectors.clickOnIndividualScrip)
 			.dispatchEvent(new Event('click', {
 				bubbles: true
 			}))
 		);
 	if (type === 'SELL') {
 		await new Promise(r => setTimeout(r, 500));
-		await pageObjects().checkElement(pageObjects().selectors.placeOrderPopUp)
-			.then(element => pageObjects().checkElement(pageObjects().selectors.insidePlaceOrderPopUp.buySellSwitch, element)
+		await alicePageObjects().checkElement(alicePageObjects().selectors.placeOrderPopUp)
+			.then(element => alicePageObjects().checkElement(alicePageObjects().selectors.insidePlaceOrderPopUp.buySellSwitch, element)
 				.then(elem => elem.click()));
 	}
 }
 
 async function cncNormalMIS(type) {
 	console.log('Inside cncNormalMIS');
-	let placeOrderPopUp = document.querySelector(pageObjects().selectors.placeOrderPopUp);
+	let placeOrderPopUp = document.querySelector(alicePageObjects().selectors.placeOrderPopUp);
 	// selects NRML or MIS or CNC
-	let productsList = placeOrderPopUp.querySelectorAll(pageObjects().selectors.insidePlaceOrderPopUp.productsListDiv);
+	let productsList = placeOrderPopUp.querySelectorAll(alicePageObjects().selectors.insidePlaceOrderPopUp.productsListDiv);
 	let product = Array.from(productsList)
-		.find(el => el.querySelector(pageObjects().selectors.insidePlaceOrderPopUp.productLabel)
+		.find(el => el.querySelector(alicePageObjects().selectors.insidePlaceOrderPopUp.productLabel)
 			.textContent === type); //CNC or NRML or MIS
 	await new Promise(r => setTimeout(r, 1000));
-	product.querySelector(pageObjects().selectors.insidePlaceOrderPopUp.productRadioButton).click();
+	product.querySelector(alicePageObjects().selectors.insidePlaceOrderPopUp.productRadioButton).click();
 }
 
 async function regularBoAmo(type) {
 	console.log('Inside regularBoAmo');
-	let placeOrderPopUp = document.querySelector(pageObjects().selectors.placeOrderPopUp);
+	let placeOrderPopUp = document.querySelector(alicePageObjects().selectors.placeOrderPopUp);
 	// Regular, BO, AMO
-	let orderOptionsList = placeOrderPopUp.querySelectorAll(pageObjects().selectors.insidePlaceOrderPopUp.orderOptionListDiv);
+	let orderOptionsList = placeOrderPopUp.querySelectorAll(alicePageObjects().selectors.insidePlaceOrderPopUp.orderOptionListDiv);
 	let orderOptionElement = Array.from(orderOptionsList)
-		.find(el => el.querySelector(pageObjects().selectors.insidePlaceOrderPopUp.orderOptionLabel)
+		.find(el => el.querySelector(alicePageObjects().selectors.insidePlaceOrderPopUp.orderOptionLabel)
 			.textContent === type);
 	await new Promise(r => setTimeout(r, 500));
-	orderOptionElement.querySelector(pageObjects().selectors.insidePlaceOrderPopUp.orderOptionRadioButton).click();
+	orderOptionElement.querySelector(alicePageObjects().selectors.insidePlaceOrderPopUp.orderOptionRadioButton).click();
 }
 
 async function lmtMktSlSlm(type) {
 	console.log('Inside lmtMktSlSlm');
-	let placeOrderPopUp = document.querySelector(pageObjects().selectors.placeOrderPopUp);
+	let placeOrderPopUp = document.querySelector(alicePageObjects().selectors.placeOrderPopUp);
 	// Selects LMT or MKT or SL or SL-M
-	let orderTypesList = placeOrderPopUp.querySelectorAll(pageObjects().selectors.insidePlaceOrderPopUp.orderTypesListDiv);
+	let orderTypesList = placeOrderPopUp.querySelectorAll(alicePageObjects().selectors.insidePlaceOrderPopUp.orderTypesListDiv);
 	let orderType = Array.from(orderTypesList)
-		.find(el => el.querySelector(pageObjects().selectors.insidePlaceOrderPopUp.orderTypeLabel)
+		.find(el => el.querySelector(alicePageObjects().selectors.insidePlaceOrderPopUp.orderTypeLabel)
 			.textContent === type); //LMT or MKT or SL or SL-M
 	await new Promise(r => setTimeout(r, 500));
-	orderType.querySelector(pageObjects().selectors.insidePlaceOrderPopUp.orderTypeRadioButton).click();
+	orderType.querySelector(alicePageObjects().selectors.insidePlaceOrderPopUp.orderTypeRadioButton).click();
 }
 
 async function qtyAndPrice(type, qty, price, trigPrice, discQty) {
 	console.log('Inside qtyAndPrice');
-	let placeOrderPopUp = document.querySelector(pageObjects().selectors.placeOrderPopUp);
+	let placeOrderPopUp = document.querySelector(alicePageObjects().selectors.placeOrderPopUp);
 	// Enter Qty, price, Trigger price, Disc.qty
-	let parentForInputElements = Array.from(placeOrderPopUp.querySelectorAll(pageObjects().selectors.insidePlaceOrderPopUp.parentForQtyPriceElements));
+	let parentForInputElements = Array.from(placeOrderPopUp.querySelectorAll(alicePageObjects().selectors.insidePlaceOrderPopUp.parentForQtyPriceElements));
 	//Enter qty
 	let qtyInputElement = parentForInputElements.find(el => el.querySelector('div label').textContent.includes('QTY'));
 	qtyInputElement.querySelector('div input').value = qty;
@@ -144,8 +144,8 @@ async function qtyAndPrice(type, qty, price, trigPrice, discQty) {
 
 async function boAdditionalDetails(sl, target, tsl) {
 	console.log('Inside boAdditionalDetails');
-	let placeOrderPopUp = document.querySelector(pageObjects().selectors.placeOrderPopUp);
-	let parentForBoInputElements = Array.from(placeOrderPopUp.querySelectorAll(pageObjects().selectors.insidePlaceOrderPopUp.parentForBoInputElements));
+	let placeOrderPopUp = document.querySelector(alicePageObjects().selectors.placeOrderPopUp);
+	let parentForBoInputElements = Array.from(placeOrderPopUp.querySelectorAll(alicePageObjects().selectors.insidePlaceOrderPopUp.parentForBoInputElements));
 	//STOPLOSS (ABSOLUTE)
 	let stopLossAbsoluteInputElement = parentForBoInputElements.find(el => el.querySelector('div label').textContent.includes('STOPLOSS'));
 	stopLossAbsoluteInputElement.querySelector('div input').value = sl;
@@ -159,8 +159,8 @@ async function boAdditionalDetails(sl, target, tsl) {
 
 async function dayOrIOC(type) {
 	console.log('Inside dayOrIOC');
-	let placeOrderPopUp = document.querySelector(pageObjects().selectors.placeOrderPopUp);
-	let orderOptionsList = placeOrderPopUp.querySelectorAll(pageObjects().selectors.insidePlaceOrderPopUp.orderOptionsListDiv);
+	let placeOrderPopUp = document.querySelector(alicePageObjects().selectors.placeOrderPopUp);
+	let orderOptionsList = placeOrderPopUp.querySelectorAll(alicePageObjects().selectors.insidePlaceOrderPopUp.orderOptionsListDiv);
 	//Day order option
 	let dayOrderOptionElement = Array.from(orderOptionsList).find(el => el.querySelector('div span label')
 			.textContent === type);// DAY or IOC
@@ -172,8 +172,8 @@ async function dayOrIOC(type) {
 
 async function buyOrSell(type) {
 	console.log('Inside buyOrSell');
-	let placeOrderPopUp = document.querySelector(pageObjects().selectors.placeOrderPopUp);
-	let placeOrderButtonList = placeOrderPopUp.querySelectorAll(pageObjects().selectors.insidePlaceOrderPopUp.placeOrderButtonListDiv);
+	let placeOrderPopUp = document.querySelector(alicePageObjects().selectors.placeOrderPopUp);
+	let placeOrderButtonList = placeOrderPopUp.querySelectorAll(alicePageObjects().selectors.insidePlaceOrderPopUp.placeOrderButtonListDiv);
 
 	let buyOrderButtonElement = Array.from(placeOrderButtonList).find(el => el.querySelector('button span')
 		.textContent === type); //BUY or SELL
